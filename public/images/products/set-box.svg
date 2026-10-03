@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Presentation set box">
+  <defs>
+    <linearGradient id="sb-box" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#241F1A"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </linearGradient>
+    <linearGradient id="sb-trim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6B5738"/>
+      <stop offset="50%" stop-color="#F3E3C0"/>
+      <stop offset="100%" stop-color="#6B5738"/>
+    </linearGradient>
+  </defs>
+  <rect x="55" y="120" width="290" height="190" rx="14" fill="url(#sb-box)"/>
+  <rect x="55" y="120" width="290" height="190" rx="14" fill="none" stroke="url(#sb-trim)" stroke-width="3"/>
+  <rect x="55" y="120" width="290" height="18" fill="url(#sb-trim)" opacity="0.5"/>
+  <circle cx="150" cy="215" r="34" fill="none" stroke="#C9A56A" stroke-width="6"/>
+  <circle cx="150" cy="215" r="16" fill="#C9A56A"/>
+  <circle cx="250" cy="215" r="34" fill="none" stroke="#C9A56A" stroke-width="6"/>
+  <circle cx="250" cy="215" r="16" fill="#C9A56A"/>
+  <rect x="170" y="260" width="60" height="8" rx="4" fill="#C9A56A"/>
+  <text x="200" y="105" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#C9A56A" letter-spacing="6">SANWARNA</text>
+</svg>

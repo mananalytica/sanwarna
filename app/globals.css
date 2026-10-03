@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #1d1d1f;
+}
+
+::selection {
+  background: #b8874e;
+  color: #ffffff;
+}
+
+/* Visible keyboard focus everywhere, gold-tinted to match the brand accent */
+:focus-visible {
+  outline: 2px solid #b8874e;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Thin gold hairline used as a meaningful section divider, not decoration */
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(184, 135, 78, 0.55), transparent);
+}
+
+.hairline-solid {
+  height: 1px;
+  width: 100%;
+  background: rgba(210, 210, 215, 0.9);
+}
+
+/* Custom scrollbar, subtle */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f5f7;
+}
+::-webkit-scrollbar-thumb {
+  background: #d2d2d7;
+  border-radius: 999px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* A light neutral tile with a hairline border — the standard product-tile /
+   card surface in the Apple-style layout (product art, uploads, cart
+   thumbnails, etc). Use in place of a plain background color so tiles read
+   as distinct surfaces against the white page. */
+.tile-surface {
+  background-color: #fbfbfd;
+  border: 1px solid #d2d2d7;
+}
+
+.input-field {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d2d2d7;
+  background-color: #fbfbfd;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.9rem;
+  color: #1d1d1f;
+}
+.input-field::placeholder {
+  color: rgba(29, 29, 31, 0.4);
+}
+.input-field:focus {
+  border-color: #b8874e;
+  outline: none;
+  background-color: #ffffff;
+}
+
+/* Shimmer used sparingly, e.g. price/CTA emphasis on load only */
+.shimmer-text {
+  background: linear-gradient(90deg, #b8874e 0%, #d9ae72 20%, #b8874e 40%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ───────── Homepage hero gallery (components/HeroGallery.tsx) ───────── */
+.hero-slide { opacity: 0; transition: opacity 1.1s ease; }
+.hero-slide[data-active="true"] { opacity: 1; }
+.hero-slide img { transform: scale(1.02); }
+.hero-slide[data-active="true"] img { animation: hero-drift 7s ease-out both; }
+@keyframes hero-drift { from { transform: scale(1.1); } to { transform: scale(1.02); } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: none; }
+  .hero-slide[data-active="true"] img { animation: none; }
+}

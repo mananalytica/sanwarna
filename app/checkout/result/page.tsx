@@ -1,0 +1,44 @@
+import Link from "next/link";
+import ClearCartOnce from "@/components/ClearCartOnce";
+
+export const metadata = { title: "Your order" };
+
+const COPY = {
+  cod: {
+    title: "Order placed",
+    body: "You pay in cash when your cufflinks arrive. Delivery is free.",
+  },
+  paid: {
+    title: "Payment received",
+    body: "JazzCash confirmed your payment. Delivery is free.",
+  },
+  failed: {
+    title: "Payment didn't go through",
+    body: "JazzCash did not complete the payment and you have not been charged by us. Your bag is still saved, so you can try again or choose Cash on Delivery.",
+  },
+} as const;
+
+export default function ResultPage({ searchParams }: { searchParams: { status?: string; ref?: string } }) {
+  const status = (searchParams.status ?? "") in COPY ? (searchParams.status as keyof typeof COPY) : "failed";
+  const ok = status !== "failed";
+  const ref = (searchParams.ref ?? "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 24);
+
+  return (
+    <div className="mx-auto flex max-w-xl flex-col items-center px-5 py-24 text-center">
+      {ok && <ClearCartOnce />}
+      <h1 className="font-display text-3xl text-graphite">{COPY[status].title}</h1>
+      <p className="mt-3 max-w-md text-balance text-steel">{COPY[status].body}</p>
+      {ref && (
+        <p className="mt-6 rounded-xl border border-hairline bg-cloud px-5 py-3 text-sm text-graphite">
+          Order reference <span className="font-semibold">{ref}</span>
+        </p>
+      )}
+      <Link
+        href={ok ? "/shop" : "/checkout"}
+        className="mt-8 rounded-full bg-graphite px-7 py-3 text-sm font-medium text-paper hover:bg-champagne"
+      >
+        {ok ? "Continue shopping" : "Back to checkout"}
+      </Link>
+    </div>
+  );
+}

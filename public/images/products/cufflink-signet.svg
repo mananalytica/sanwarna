@@ -1,0 +1,24 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Signet oval cufflink">
+  <defs>
+    <linearGradient id="cs-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F3E3C0"/>
+      <stop offset="50%" stop-color="#C9A56A"/>
+      <stop offset="100%" stop-color="#3A2E1F"/>
+    </linearGradient>
+    <radialGradient id="cs-face" cx="35%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#4B4136"/>
+      <stop offset="60%" stop-color="#241F1A"/>
+      <stop offset="100%" stop-color="#0A0A0A"/>
+    </radialGradient>
+    <linearGradient id="cs-post" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C9A56A"/>
+      <stop offset="100%" stop-color="#6B5738"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="200" cy="335" rx="22" ry="28" fill="url(#cs-post)"/>
+  <circle cx="200" cy="335" r="26" fill="url(#cs-rim)"/>
+  <line x1="200" y1="255" x2="200" y2="305" stroke="url(#cs-post)" stroke-width="14" stroke-linecap="round"/>
+  <ellipse cx="200" cy="165" rx="135" ry="105" fill="url(#cs-rim)"/>
+  <ellipse cx="200" cy="165" rx="112" ry="85" fill="url(#cs-face)"/>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="46" fill="#C9A56A" letter-spacing="2">S</text>
+</svg>
