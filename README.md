@@ -800,4 +800,3 @@ order as JSON to a URL of your choice.
 
 After changing `data/products.ts`, run `npm run db:seed` so the catalogue
 in MotherDuck matches; the site reads products from MotherDuck first.
-# sanwarna

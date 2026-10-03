@@ -1,7 +1,7 @@
 import { CartLine } from "@/types";
 import { getAllProducts } from "./getProducts";
 import { shippingCostFor } from "./currency";
-import { getMotherDuckPool, isMotherDuckConfigured } from "./motherduck";
+import { DB_SCHEMA, getMotherDuckPool, isMotherDuckConfigured } from "./motherduck";
 
 export type Customer = {
   email: string;
@@ -68,7 +68,7 @@ export async function buildOrder(
 }
 
 const ORDERS_TABLE = `
-  CREATE TABLE IF NOT EXISTS orders (
+  CREATE TABLE IF NOT EXISTS ${DB_SCHEMA}.orders (
     ref VARCHAR PRIMARY KEY,
     placed_at VARCHAR NOT NULL,   -- ISO time, UTC
     payment VARCHAR NOT NULL,     -- cod | jazzcash
@@ -84,7 +84,10 @@ let tableReady: Promise<unknown> | null = null;
 function ordersDb() {
   const pool = getMotherDuckPool();
   // Create the table the first time this server instance touches orders.
-  tableReady ??= pool.query(ORDERS_TABLE).catch((err) => {
+  tableReady ??= pool
+    .query(`CREATE SCHEMA IF NOT EXISTS ${DB_SCHEMA}`)
+    .then(() => pool.query(ORDERS_TABLE))
+    .catch((err) => {
     tableReady = null;
     throw err;
   });
@@ -115,7 +118,7 @@ export async function saveOrder(order: Order): Promise<boolean> {
     try {
       const db = await ordersDb();
       await db.query(
-        "INSERT INTO orders (ref, placed_at, payment, status, total, customer_name, phone, city, data) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)",
+        `INSERT INTO ${DB_SCHEMA}.orders (ref, placed_at, payment, status, total, customer_name, phone, city, data) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
         [
           order.ref,
           order.placedAt,
@@ -143,7 +146,7 @@ export async function setOrderStatus(ref: string, status: Order["status"]) {
   if (isMotherDuckConfigured()) {
     try {
       const db = await ordersDb();
-      await db.query("UPDATE orders SET status = $1 WHERE ref = $2", [status, ref]);
+      await db.query(`UPDATE ${DB_SCHEMA}.orders SET status = $1 WHERE ref = $2`, [status, ref]);
     } catch (err) {
       console.error("[order] could not update status in MotherDuck", err);
     }
@@ -156,7 +159,7 @@ export async function getOrderTotal(ref: string): Promise<number | null> {
   if (!isMotherDuckConfigured()) return null;
   try {
     const db = await ordersDb();
-    const { rows } = await db.query<{ total: number }>("SELECT total FROM orders WHERE ref = $1", [ref]);
+    const { rows } = await db.query<{ total: number }>(`SELECT total FROM ${DB_SCHEMA}.orders WHERE ref = $1`, [ref]);
     return rows[0] ? Number(rows[0].total) : null;
   } catch {
     return null;
@@ -170,7 +173,7 @@ export async function listOrders(limit = 200): Promise<OrderRow[] | null> {
   if (!isMotherDuckConfigured()) return null;
   const db = await ordersDb();
   const { rows } = await db.query<{ status: Order["status"]; data: string }>(
-    `SELECT status, data FROM orders ORDER BY placed_at DESC LIMIT ${Math.floor(limit)}`
+    `SELECT status, data FROM ${DB_SCHEMA}.orders ORDER BY placed_at DESC LIMIT ${Math.floor(limit)}`
   );
   return rows.map((r) => ({ ...(JSON.parse(r.data) as Order), status: r.status }));
 }

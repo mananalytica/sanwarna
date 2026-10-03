@@ -12,6 +12,10 @@ import { Pool } from "pg";
 
 let pool: Pool | null = null;
 
+// SANWARNA's tables live in their own schema, so they stay separate from
+// other projects sharing the same MotherDuck database.
+export const DB_SCHEMA = (process.env.MOTHERDUCK_SCHEMA || "sanwarna").replace(/[^A-Za-z0-9_]/g, "");
+
 export function isMotherDuckConfigured(): boolean {
   return Boolean(process.env.MOTHERDUCK_TOKEN);
 }

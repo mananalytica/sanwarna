@@ -2,7 +2,7 @@ import { cache } from "react";
 import { Product } from "@/types";
 import { PRODUCTS as STATIC_PRODUCTS } from "@/data/products";
 import { imageUrl } from "./cloudinary";
-import { getMotherDuckPool, isMotherDuckConfigured } from "./motherduck";
+import { DB_SCHEMA, getMotherDuckPool, isMotherDuckConfigured } from "./motherduck";
 
 // This is the ONE place the app should fetch product data from. Server
 // Components and Route Handlers import from here (and `await` the result);
@@ -23,7 +23,7 @@ async function queryProductsFromMotherDuck(): Promise<Product[] | null> {
   try {
     const pool = getMotherDuckPool();
     const { rows } = await pool.query<{ data: string }>(
-      "SELECT data FROM products ORDER BY sort_order ASC"
+      `SELECT data FROM ${DB_SCHEMA}.products ORDER BY sort_order ASC`
     );
     if (rows.length === 0) return null;
     return rows.map((row) => JSON.parse(row.data) as Product);

@@ -17,6 +17,8 @@
 import { Pool } from "pg";
 import { PRODUCTS } from "../data/products";
 
+const SCHEMA = (process.env.MOTHERDUCK_SCHEMA || "sanwarna").replace(/[^A-Za-z0-9_]/g, "");
+
 async function main() {
   const token = process.env.MOTHERDUCK_TOKEN;
   if (!token) {
@@ -41,8 +43,9 @@ async function main() {
 
     try {
       console.log("Creating `products` table if it doesn't exist…");
+      await client.query(`CREATE SCHEMA IF NOT EXISTS ${SCHEMA}`);
       await client.query(`
-        CREATE TABLE IF NOT EXISTS products (
+        CREATE TABLE IF NOT EXISTS ${SCHEMA}.products (
           id VARCHAR PRIMARY KEY,
           slug VARCHAR UNIQUE NOT NULL,
           sort_order INTEGER NOT NULL,
@@ -52,11 +55,11 @@ async function main() {
 
       console.log(`Seeding ${PRODUCTS.length} products…`);
       await client.query("BEGIN");
-      await client.query("DELETE FROM products");
+      await client.query(`DELETE FROM ${SCHEMA}.products`);
       for (let i = 0; i < PRODUCTS.length; i++) {
         const product = PRODUCTS[i];
         await client.query(
-          "INSERT INTO products (id, slug, sort_order, data) VALUES ($1, $2, $3, $4)",
+          `INSERT INTO ${SCHEMA}.products (id, slug, sort_order, data) VALUES ($1, $2, $3, $4)`,
           [product.id, product.slug, i, JSON.stringify(product)]
         );
       }
