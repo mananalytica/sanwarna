@@ -57,6 +57,45 @@ export const PRODUCTS: Product[] = [
     tryOnAnchor: "wrist",
   },
   {
+    id: "p10",
+    slug: "rouge-crystal-cufflinks",
+    name: "Rouge Crystal Cufflinks",
+    category: "cufflinks",
+    price: 32000,
+    compareAtPrice: 38000,
+    description:
+      "A deep red princess-cut crystal held by four stone-set claws in polished silver-tone metal. Dark as wine in the shade, bright as an ember under the lights.",
+    story:
+      "Rouge is the same bold setting as our Aurora, built around a deep red stone. The square, princess-cut crystal sits high in an open frame, so light enters from the sides as well as the top. In low light it reads almost black-red; under a chandelier or in sunlight it glows from inside and throws red across the cuff. Four curved claws hold the stone at the middle of each edge, each set with its own cluster of small clear stones, so there is a white sparkle around the red. The back is a swivel toggle that slips through a double cuff and locks flat. Red against a white cuff and a dark suit is a classic for the barat, the walima and formal dinners. Each pair arrives in a black velvet presentation box, ready to gift.",
+    materials: [
+      "Princess-cut deep red crystal centre stone",
+      "Polished silver-tone metal frame, open at the sides",
+      "Four claws, each set with small clear accent stones",
+      "Swivel toggle back for double (French) cuffs",
+      "Sold as a pair in a black velvet presentation box",
+      "Care: wipe with a soft dry cloth and keep away from perfume and water",
+    ],
+    images: [
+      "/images/products/rouge-1.jpg",
+      "/images/products/rouge-2.jpg",
+      "/images/products/rouge-3.jpg",
+      "/images/products/rouge-4.jpg",
+    ],
+    heroImages: [
+      "/images/products/rouge-wide-1.jpg",
+      "/images/products/rouge-wide-2.jpg",
+      "/images/products/rouge-wide-3.jpg",
+      "/images/products/rouge-wide-4.jpg",
+    ],
+    // Used by the admin Video Studio; a drawn stand-in until a cutout exists.
+    overlayImage: "/images/products/cufflink-classic.svg",
+    variants: [{ id: "v1", label: "Silver / Red Crystal", swatch: "#8E1B1B", inStock: true }],
+    tags: ["wedding", "statement", "barat", "gift", "red"],
+    featured: true,
+    newArrival: true,
+    tryOnAnchor: "wrist",
+  },
+  {
     id: "p1",
     slug: "the-regent-cufflinks",
     name: "The Regent Cufflinks",

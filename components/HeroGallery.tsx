@@ -29,9 +29,14 @@ export default function HeroGallery({ products }: { products: Product[] }) {
       .filter((x) => x.photos.length > 0);
     // Few products: show several photos of each. Many: two each.
     const perProduct = withPhotos.length <= 2 ? 4 : 2;
-    return withPhotos.flatMap(({ product, photos }) =>
-      photos.slice(0, perProduct).map((src) => ({ product, src }))
-    );
+    // Take turns between products: A1, B1, A2, B2…
+    const out: Slide[] = [];
+    for (let i = 0; i < perProduct; i++) {
+      for (const { product, photos } of withPhotos) {
+        if (photos[i]) out.push({ product, src: photos[i] });
+      }
+    }
+    return out;
   }, [products]);
 
   const [index, setIndex] = useState(0);
