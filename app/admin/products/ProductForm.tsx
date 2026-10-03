@@ -7,7 +7,16 @@ import { deleteProductAction, saveProductAction } from "../actions";
 // One form for adding and editing. Field names follow the product feed
 // (title, description, image_link, price, sale_price, availability…).
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({ label, hint, group, children }: { label: string; hint?: string; group?: boolean; children: React.ReactNode }) {
+  if (group) {
+    return (
+      <div role="group" aria-label={label}>
+        <span className="mb-1.5 block text-sm font-medium text-graphite">{label}</span>
+        {children}
+        {hint && <span className="mt-1 block text-xs text-steel">{hint}</span>}
+      </div>
+    );
+  }
   return (
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium text-graphite">{label}</span>
@@ -48,14 +57,14 @@ export default function ProductForm({ product, error }: { product?: Product; err
           <textarea name="story" rows={5} defaultValue={p?.story} className="input-field" />
         </Field>
 
-        <Field label="Image link" hint="Main photo, ideally square. Upload one, or paste a link.">
+        <Field group label="Main image" hint="Main photo, ideally square.">
           <ImageField name="image_link" required defaultValue={p?.images[0]} />
         </Field>
-        <Field label="Additional image links" hint="Upload more photos, or paste links one per line.">
+        <Field group label="Additional images" hint="More photos for the product page.">
           <ImageField name="additional_image_link" multiple defaultValue={p?.images.slice(1).join("\n")} />
         </Field>
-        <Field label="Homepage gallery images" hint="Optional wide photos for the homepage gallery, one per line. If blank, the images above are used.">
-          <ImageField name="hero_images" multiple rows={2} defaultValue={p?.heroImages?.join("\n")} />
+        <Field group label="Homepage gallery images" hint="Optional wide photos for the homepage gallery, one per line. If blank, the images above are used.">
+          <ImageField name="hero_images" multiple defaultValue={p?.heroImages?.join("\n")} />
         </Field>
 
         <div className="grid gap-6 md:grid-cols-3">

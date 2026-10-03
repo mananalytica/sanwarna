@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { randomUUID } from "node:crypto";
-import { put } from "@vercel/blob";
+import { list, put } from "@vercel/blob";
 import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/adminAuth";
 
 // Receives one photo from the admin product form, already compressed in
@@ -49,4 +49,28 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "The photo could not be stored. Please try again." }, { status: 500 });
   }
   return NextResponse.json({ url });
+}
+
+// The photo library: every photo already uploaded, newest first.
+export async function GET() {
+  if (!(await verifyAdminSessionToken(cookies().get(ADMIN_COOKIE_NAME)?.value))) {
+    return NextResponse.json({ error: "Please sign in again." }, { status: 401 });
+  }
+  if (!process.env.BLOB_READ_WRITE_TOKEN) return NextResponse.json({ photos: [] });
+  try {
+    const photos: { url: string; uploadedAt: string }[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await list({ prefix: "products/", cursor, limit: 1000 });
+      for (const b of page.blobs) {
+        if (b.pathname.endsWith(".jpg")) photos.push({ url: b.url, uploadedAt: new Date(b.uploadedAt).toISOString() });
+      }
+      cursor = page.hasMore ? page.cursor : undefined;
+    } while (cursor);
+    photos.sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+    return NextResponse.json({ photos: photos.map((p) => p.url) });
+  } catch (err) {
+    console.error("[upload] list failed", err);
+    return NextResponse.json({ error: "The photo library could not be loaded." }, { status: 500 });
+  }
 }
