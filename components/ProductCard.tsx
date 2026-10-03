@@ -29,42 +29,39 @@ export default function ProductCard({
           />
         </div>
         <div className="pointer-events-none absolute inset-0 bg-vignette opacity-60" />
-        <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+      </div>
+
+      {/* Everything about the piece sits here in the text; nothing covers the photo. */}
+      <div className="mt-3">
+        <h3 className="font-display text-base text-graphite group-hover:text-champagne">{product.name}</h3>
+
+        <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-sm">
+          <span className="text-champagne">{formatPrice(product.price)}</span>
+          {onSale && (
+            <>
+              <span className="text-xs text-steel line-through">{formatPrice(product.compareAtPrice!)}</span>
+              <span className="whitespace-nowrap text-xs font-medium text-rust">
+                Save {formatPrice(product.compareAtPrice! - product.price)}
+              </span>
+            </>
+          )}
+        </p>
+
+        <p className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs text-steel">
+          <span className="capitalize">{product.category.replace("-", " ")}</span>
           {product.bestSeller && (
-            <span className="rounded-xl bg-champagne px-2 py-0.5 text-[10px] font-semibold tracking-wide text-graphite">
-              Best Seller
+            <span className="flex items-center gap-1 whitespace-nowrap text-champagne">
+              <span aria-hidden className="h-1 w-1 rounded-full bg-champagne" />
+              Best seller
             </span>
           )}
           {product.newArrival && (
-            <span className="rounded-xl border border-champagne/60 bg-paper/70 px-2 py-0.5 text-[10px] tracking-wide text-champagne">
+            <span className="flex items-center gap-1 whitespace-nowrap text-graphite">
+              <span aria-hidden className="h-1 w-1 rounded-full bg-graphite" />
               New
             </span>
           )}
-          {onSale && (
-            <span className="rounded-xl bg-rust px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white">
-              Save {formatPrice(product.compareAtPrice! - product.price)}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-3 flex items-start justify-between gap-2">
-        <div>
-          <h3 className="font-display text-base text-graphite group-hover:text-champagne">
-            {product.name}
-          </h3>
-          <p className="mt-0.5 text-xs capitalize text-graphite/45">
-            {product.category.replace("-", " ")}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-champagne">{formatPrice(product.price)}</p>
-          {onSale && (
-            <p className="text-xs text-graphite/35 line-through">
-              {formatPrice(product.compareAtPrice!)}
-            </p>
-          )}
-        </div>
+        </p>
       </div>
     </Link>
   );
