@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Product } from "@/types";
 import { GOOGLE_CATEGORY, PRODUCT_TYPE } from "@/lib/feed";
+import ImageField from "@/components/admin/ImageField";
 import { deleteProductAction, saveProductAction } from "../actions";
 
 // One form for adding and editing. Field names follow the product feed
@@ -47,14 +48,14 @@ export default function ProductForm({ product, error }: { product?: Product; err
           <textarea name="story" rows={5} defaultValue={p?.story} className="input-field" />
         </Field>
 
-        <Field label="Image link" hint="Main photo. A full https:// link (e.g. from Cloudinary) or a site path like /images/products/aurora-1.jpg.">
-          <input name="image_link" required defaultValue={p?.images[0]} className="input-field" />
+        <Field label="Image link" hint="Main photo, ideally square. Upload one, or paste a link.">
+          <ImageField name="image_link" required defaultValue={p?.images[0]} />
         </Field>
-        <Field label="Additional image links" hint="One per line.">
-          <textarea name="additional_image_link" rows={3} defaultValue={p?.images.slice(1).join("\n")} className="input-field" />
+        <Field label="Additional image links" hint="Upload more photos, or paste links one per line.">
+          <ImageField name="additional_image_link" multiple defaultValue={p?.images.slice(1).join("\n")} />
         </Field>
         <Field label="Homepage gallery images" hint="Optional wide photos for the homepage gallery, one per line. If blank, the images above are used.">
-          <textarea name="hero_images" rows={2} defaultValue={p?.heroImages?.join("\n")} className="input-field" />
+          <ImageField name="hero_images" multiple rows={2} defaultValue={p?.heroImages?.join("\n")} />
         </Field>
 
         <div className="grid gap-6 md:grid-cols-3">

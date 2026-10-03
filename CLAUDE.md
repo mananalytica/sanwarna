@@ -269,3 +269,11 @@ since production may run without a database configured at all.
 - The product form's field names mirror the product feed; "price" is the
   regular price and "sale price" the charged price (stored as
   `compareAtPrice` / `price`).
+
+## Photo uploads
+
+- The admin product form uploads photos through `components/admin/ImageField.tsx`
+  (compresses in the browser: one 1600px JPG + 320/640/1280 WebP) to
+  `app/api/admin/upload` → Vercel Blob. `lib/imageLoader.js` maps a Blob
+  `.jpg` link to its WebP sizes. Widths must stay in sync across these
+  files and `scripts/optimize-images.mjs`.
