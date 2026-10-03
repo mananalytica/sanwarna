@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get("from") || "/video-studio";
+  const from = searchParams.get("from") || "/admin";
 
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ function AdminLoginForm() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-5 py-16">
       <p className="text-xs uppercase tracking-wider2 text-champagne/80">Admin</p>
-      <h1 className="mt-3 font-display text-3xl text-graphite">Video Studio access</h1>
+      <h1 className="mt-3 font-display text-3xl text-graphite">Admin sign in</h1>
       <p className="mt-2 text-sm text-steel">
         This area is for the SANWARNA team only.
       </p>
@@ -67,7 +67,7 @@ function AdminLoginForm() {
           disabled={loading}
           className="w-full rounded-full bg-champagne py-3 text-sm font-medium tracking-wide text-graphite transition-colors hover:bg-champagne-light disabled:opacity-50"
         >
-          {loading ? "Checking…" : "Enter Studio"}
+          {loading ? "Checking…" : "Sign in"}
         </button>
       </form>
     </div>

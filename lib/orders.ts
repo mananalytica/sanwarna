@@ -87,6 +87,8 @@ function ordersDb() {
   tableReady ??= pool
     .query(`CREATE SCHEMA IF NOT EXISTS ${DB_SCHEMA}`)
     .then(() => pool.query(ORDERS_TABLE))
+    // delivery progress, set by the admin (added after the table first shipped)
+    .then(() => pool.query(`ALTER TABLE ${DB_SCHEMA}.orders ADD COLUMN IF NOT EXISTS fulfilment VARCHAR DEFAULT 'new'`))
     .catch((err) => {
     tableReady = null;
     throw err;
@@ -166,14 +168,29 @@ export async function getOrderTotal(ref: string): Promise<number | null> {
   }
 }
 
-export type OrderRow = Order & { status: Order["status"] };
+export const FULFILMENT = ["new", "confirmed", "shipped", "delivered", "cancelled", "returned"] as const;
+export type Fulfilment = (typeof FULFILMENT)[number];
+
+export type OrderRow = Order & { status: Order["status"]; fulfilment: Fulfilment };
+
+/** Sets where an order is in delivery (admin only). */
+export async function setFulfilment(ref: string, value: Fulfilment) {
+  const db = await ordersDb();
+  await db.query(`UPDATE ${DB_SCHEMA}.orders SET fulfilment = $1 WHERE ref = $2`, [value, ref]);
+}
+
+/** Marks an order's payment as received or not (e.g. cash collected). */
+export async function setPaymentStatus(ref: string, status: Order["status"]) {
+  const db = await ordersDb();
+  await db.query(`UPDATE ${DB_SCHEMA}.orders SET status = $1 WHERE ref = $2`, [status, ref]);
+}
 
 /** Newest orders first, for the admin page. */
 export async function listOrders(limit = 200): Promise<OrderRow[] | null> {
   if (!isMotherDuckConfigured()) return null;
   const db = await ordersDb();
-  const { rows } = await db.query<{ status: Order["status"]; data: string }>(
-    `SELECT status, data FROM ${DB_SCHEMA}.orders ORDER BY placed_at DESC LIMIT ${Math.floor(limit)}`
+  const { rows } = await db.query<{ status: Order["status"]; fulfilment: Fulfilment | null; data: string }>(
+    `SELECT status, fulfilment, data FROM ${DB_SCHEMA}.orders ORDER BY placed_at DESC LIMIT ${Math.floor(limit)}`
   );
-  return rows.map((r) => ({ ...(JSON.parse(r.data) as Order), status: r.status }));
+  return rows.map((r) => ({ ...(JSON.parse(r.data) as Order), status: r.status, fulfilment: r.fulfilment ?? "new" }));
 }

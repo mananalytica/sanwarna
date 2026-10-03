@@ -17,7 +17,8 @@
 import { Pool } from "pg";
 import { PRODUCTS } from "../data/products";
 
-const SCHEMA = (process.env.MOTHERDUCK_SCHEMA || "sanwarna").replace(/[^A-Za-z0-9_]/g, "");
+const ident = (v: string) => v.replace(/[^A-Za-z0-9_]/g, "");
+const SCHEMA = `${ident(process.env.MOTHERDUCK_DATABASE || "sanwarna")}.${ident(process.env.MOTHERDUCK_SCHEMA || "main")}`;
 
 async function main() {
   const token = process.env.MOTHERDUCK_TOKEN;

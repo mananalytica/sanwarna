@@ -1,12 +1,9 @@
--- SANWARNA tables, in their own schema inside your MotherDuck database.
--- Run this once in the MotherDuck SQL editor (with the database selected
--- that MOTHERDUCK_DATABASE points to). Safe to run again.
-
-CREATE SCHEMA IF NOT EXISTS sanwarna;
+-- SANWARNA tables, in the `sanwarna` database (its default `main` schema).
+-- Run once in the MotherDuck SQL editor. Safe to run again.
 
 -- Optional catalogue. While this table is empty the site uses the
 -- catalogue in data/products.ts; `npm run db:seed` fills it from that file.
-CREATE TABLE IF NOT EXISTS sanwarna.products (
+CREATE TABLE IF NOT EXISTS sanwarna.main.products (
   id VARCHAR PRIMARY KEY,
   slug VARCHAR UNIQUE NOT NULL,
   sort_order INTEGER NOT NULL,
@@ -14,7 +11,7 @@ CREATE TABLE IF NOT EXISTS sanwarna.products (
 );
 
 -- Orders placed at checkout.
-CREATE TABLE IF NOT EXISTS sanwarna.orders (
+CREATE TABLE IF NOT EXISTS sanwarna.main.orders (
   ref VARCHAR PRIMARY KEY,
   placed_at VARCHAR NOT NULL,    -- ISO time, UTC
   payment VARCHAR NOT NULL,      -- cod | jazzcash

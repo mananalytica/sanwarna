@@ -255,3 +255,17 @@ since production may run without a database configured at all.
   made by `scripts/optimize-images.mjs` on predev/prebuild, gitignored).
   The older note about `images.unoptimized` no longer applies. If you
   change the widths, change them in both files and in `next.config.js`.
+
+## Admin backend
+
+- `/admin/login` → `/admin/products` (list, add, edit, delete) and
+  `/admin/orders` (payment + delivery status). All gated by `middleware.ts`
+  and re-checked inside every server action in `app/admin/actions.ts`.
+- Products edited in the admin are stored in MotherDuck
+  (`lib/productStore.ts`). The first save copies `data/products.ts` into
+  the table; after that the table is the source of truth and
+  `data/products.ts` is only the fallback. Don't run `npm run db:seed`
+  after that point: it overwrites admin edits.
+- The product form's field names mirror the product feed; "price" is the
+  regular price and "sale price" the charged price (stored as
+  `compareAtPrice` / `price`).

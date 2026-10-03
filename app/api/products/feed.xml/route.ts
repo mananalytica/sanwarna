@@ -1,6 +1,7 @@
 import { getAllProducts } from "@/lib/getProducts";
 import { BRAND, SITE_URL } from "@/lib/site";
 import { Product } from "@/types";
+import { GOOGLE_CATEGORY, PRODUCT_TYPE } from "@/lib/feed";
 
 // Google Merchant Center / Meta catalogue feed (RSS 2.0 + g: namespace).
 // Submit  <site>/api/products/feed.xml  as the feed URL.
@@ -8,22 +9,9 @@ import { Product } from "@/types";
 // Only products with real photos are listed: Google rejects drawn/SVG
 // placeholder images, so placeholder products are left out automatically.
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic"; // always reflects the latest admin edits
 
 const UTM = "utm_source=google&utm_medium=shopping&utm_campaign=product_catalog";
-
-const GOOGLE_CATEGORY: Record<Product["category"], string> = {
-  cufflinks: "Apparel & Accessories > Clothing Accessories > Cufflinks",
-  "tie-pens": "Apparel & Accessories > Clothing Accessories > Tie Clips",
-  "tie-clips": "Apparel & Accessories > Clothing Accessories > Tie Clips",
-  sets: "Apparel & Accessories > Clothing Accessories",
-};
-const PRODUCT_TYPE: Record<Product["category"], string> = {
-  cufflinks: "Men > Accessories > Cufflinks",
-  "tie-pens": "Men > Accessories > Tie Pins",
-  "tie-clips": "Men > Accessories > Tie Clips",
-  sets: "Men > Accessories > Gift Sets",
-};
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -36,7 +24,7 @@ function item(p: Product): string {
   const onSale = p.compareAtPrice && p.compareAtPrice > price;
   const [first, ...rest] = p.images;
   const tags = [
-    `<g:id>SNW-${esc(p.slug.toUpperCase())}</g:id>`,
+    `<g:id>${esc(p.sku || `SNW-${p.slug.toUpperCase()}`)}</g:id>`,
     `<title>${esc(p.name)}</title>`,
     `<description>${esc(`${p.description} ${p.story}`)}</description>`,
     `<link>${esc(`${SITE_URL}/shop/${p.slug}?${UTM}`)}</link>`,
@@ -47,11 +35,11 @@ function item(p: Product): string {
     ...(onSale ? [`<g:sale_price>${money(price)}</g:sale_price>`] : []),
     `<g:brand>${BRAND}</g:brand>`,
     `<g:condition>new</g:condition>`,
-    `<g:google_product_category>${esc(GOOGLE_CATEGORY[p.category])}</g:google_product_category>`,
-    `<g:product_type>${esc(PRODUCT_TYPE[p.category])}</g:product_type>`,
+    `<g:google_product_category>${esc(p.googleCategory || GOOGLE_CATEGORY[p.category])}</g:google_product_category>`,
+    `<g:product_type>${esc(p.productType || PRODUCT_TYPE[p.category])}</g:product_type>`,
     ...(variant ? [`<g:color>${esc(variant.label)}</g:color>`] : []),
-    `<g:gender>male</g:gender>`,
-    `<g:age_group>adult</g:age_group>`,
+    `<g:gender>${p.gender || "male"}</g:gender>`,
+    `<g:age_group>${p.ageGroup || "adult"}</g:age_group>`,
     `<g:shipping><g:country>PK</g:country><g:price>0.0 PKR</g:price></g:shipping>`,
   ];
   return `    <item>\n      ${tags.join("\n      ")}\n    </item>`;

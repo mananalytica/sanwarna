@@ -35,6 +35,13 @@ export type Product = {
   // Wide (landscape) photos for the homepage hero gallery. Optional —
   // the gallery falls back to `images` when a product has none.
   heroImages?: string[];
+  // Product-feed fields (see app/api/products/feed.xml). All optional —
+  // sensible values are derived from the category when they are blank.
+  sku?: string; // g:id
+  googleCategory?: string; // g:google_product_category
+  productType?: string; // g:product_type
+  gender?: "male" | "female" | "unisex";
+  ageGroup?: "adult" | "kids";
 };
 
 export type CartLine = {
