@@ -1,13 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import imageLoader from "@/lib/imageLoader";
 
 /**
  * A photo field for the admin product form.
  *
- *  - Upload: pick photos, or drop them here from your computer. They are
- *    shrunk and compressed in the browser, then stored via /api/admin/upload.
+ *  - Upload: pick photos, or drop them here from your computer. The
+ *    original file is stored as it is: no resizing, no re-compression.
  *  - Library: shows every photo already in storage; click one to use it, or
  *    drag it onto any photo field on the page.
  *  - Each chosen photo shows as a tile: drag tiles to reorder, × to remove.
@@ -16,45 +17,23 @@ import imageLoader from "@/lib/imageLoader";
  * per line (multiple).
  */
 
-const MAX_SIDE = 1600; // longest side of the stored JPG
-const WEBP_WIDTHS = [320, 640, 1280]; // must match lib/imageLoader.js
 const DRAG_TYPE = "application/x-sanwarna-photo";
 const thumb = (src: string) => imageLoader({ src, width: 320 });
+const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 
-function draw(img: ImageBitmap, width: number, type: string, quality: number): Promise<Blob> {
-  const w = Math.min(width, img.width);
-  const h = Math.round((img.height * w) / img.width);
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
-  ctx.fillStyle = "#fff"; // transparent PNGs get a white background
-  ctx.fillRect(0, 0, w, h);
-  ctx.drawImage(img, 0, 0, w, h);
-  return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b && b.type === type ? resolve(b) : reject(new Error("unsupported"))), type, quality)
-  );
-}
-
-async function compressAndUpload(file: File): Promise<string> {
-  let img: ImageBitmap;
+/** Sends the original file to storage exactly as it is: no resizing, no re-compression. */
+async function uploadOriginal(file: File): Promise<string> {
+  if (!ALLOWED.includes(file.type)) throw new Error(`${file.name} must be a JPG, PNG or WebP photo.`);
+  const safe = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "") || "photo";
   try {
-    img = await createImageBitmap(file, { imageOrientation: "from-image" });
-  } catch {
-    throw new Error(`${file.name} isn't a photo this browser can open. Use a JPG or PNG.`);
+    const blob = await upload(`originals/${safe}`, file, { access: "public", handleUploadUrl: "/api/admin/upload" });
+    return blob.url;
+  } catch (err) {
+    console.error("[upload]", err);
+    throw new Error(
+      `${file.name} could not be uploaded. Check that you are still signed in and that photo storage is connected in Vercel, then try again.`
+    );
   }
-  const jpgWidth = img.width >= img.height ? MAX_SIDE : Math.round((MAX_SIDE * img.width) / img.height);
-  const body = new FormData();
-  try {
-    body.set("jpg", await draw(img, jpgWidth, "image/jpeg", 0.85), "photo.jpg");
-    for (const w of WEBP_WIDTHS) body.set(`w${w}`, await draw(img, w, "image/webp", 0.78), `photo-${w}.webp`);
-  } catch {
-    throw new Error("This browser can't compress photos. Please use a current Chrome, Edge, Firefox or Safari.");
-  }
-  const res = await fetch("/api/admin/upload", { method: "POST", body });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error ?? "The upload failed. Please try again.");
-  return data.url as string;
 }
 
 const split = (v: string) => v.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
@@ -95,7 +74,7 @@ export default function ImageField({
     setPending(previews);
     for (let i = 0; i < list.length; i++) {
       try {
-        add(await compressAndUpload(list[i]));
+        add(await uploadOriginal(list[i]));
       } catch (err) {
         setError(err instanceof Error ? err.message : "The upload failed.");
         break;

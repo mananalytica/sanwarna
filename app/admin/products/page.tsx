@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { canEditProducts, listProductsForAdmin } from "@/lib/productStore";
 import { formatPrice } from "@/lib/currency";
+import DeleteProductButton from "@/components/admin/DeleteProductButton";
 import { imageUrl } from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
@@ -68,9 +69,12 @@ export default async function AdminProducts({ searchParams }: { searchParams: { 
                   <td className="px-4 py-3">{inStock ? "in stock" : "out of stock"}</td>
                   <td className="px-4 py-3 text-right">
                     {editable && (
-                      <Link href={`/admin/products/${p.id}`} className="text-champagne underline-offset-4 hover:underline">
-                        Edit
-                      </Link>
+                      <div className="flex items-center justify-end gap-4">
+                        <Link href={`/admin/products/${p.id}`} className="text-champagne underline-offset-4 hover:underline">
+                          Edit
+                        </Link>
+                        <DeleteProductButton id={p.id} name={p.name} />
+                      </div>
                     )}
                   </td>
                 </tr>

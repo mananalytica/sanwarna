@@ -1,54 +1,47 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { randomUUID } from "node:crypto";
-import { list, put } from "@vercel/blob";
+import { list } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/adminAuth";
 
-// Receives one photo from the admin product form, already compressed in
-// the browser (components/admin/ImageField.tsx) into a JPG plus three WebP
-// sizes, and stores them in Vercel Blob. Returns the JPG's public link;
-// lib/imageLoader.js finds the WebP sizes from that link.
-
-const MAX_BYTES = 3 * 1024 * 1024;
-const PARTS = { jpg: "image/jpeg", w320: "image/webp", w640: "image/webp", w1280: "image/webp" } as const;
+// Photo uploads from the admin product form (components/admin/ImageField.tsx).
+// The browser sends the ORIGINAL file straight to Vercel Blob, untouched:
+// no resizing, no re-compression. This route only checks that the person
+// is the signed-in admin and hands the browser a one-time upload permit.
+// Originals are stored under "originals/". (Older uploads under
+// "products/" were compressed; lib/imageLoader.js still serves those.)
 
 export async function POST(req: Request) {
-  if (!(await verifyAdminSessionToken(cookies().get(ADMIN_COOKIE_NAME)?.value))) {
-    return NextResponse.json({ error: "Please sign in again." }, { status: 401 });
-  }
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
-      { error: "Photo storage isn't set up yet. In Vercel, open Storage, create a Blob store, connect it to this project and redeploy." },
+      { error: "Photo storage isn't set up yet. In Vercel, open Storage, create a public Blob store, connect it to this project and redeploy." },
       { status: 503 }
     );
   }
-
-  const form = await req.formData();
-  const id = randomUUID().slice(0, 12);
-  let url = "";
+  const body = (await req.json()) as HandleUploadBody;
   try {
-    for (const [part, type] of Object.entries(PARTS)) {
-      const file = form.get(part);
-      if (!(file instanceof Blob) || file.size === 0) {
-        return NextResponse.json({ error: "The photo didn't arrive complete. Please try again." }, { status: 400 });
-      }
-      if (file.size > MAX_BYTES || file.type !== type) {
-        return NextResponse.json({ error: "That file isn't a photo this site can use." }, { status: 400 });
-      }
-      const name = part === "jpg" ? `products/${id}.jpg` : `products/${id}-${part.slice(1)}.webp`;
-      const saved = await put(name, file, {
-        access: "public",
-        addRandomSuffix: false,
-        contentType: type,
-        cacheControlMaxAge: 60 * 60 * 24 * 365,
-      });
-      if (part === "jpg") url = saved.url;
-    }
+    const result = await handleUpload({
+      body,
+      request: req,
+      onBeforeGenerateToken: async (pathname) => {
+        // Runs for the browser's permit request: must be the signed-in admin.
+        if (!(await verifyAdminSessionToken(cookies().get(ADMIN_COOKIE_NAME)?.value))) {
+          throw new Error("Please sign in again.");
+        }
+        if (!pathname.startsWith("originals/")) throw new Error("Unexpected upload location.");
+        return {
+          allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+          maximumSizeInBytes: 30 * 1024 * 1024,
+          addRandomSuffix: true,
+          cacheControlMaxAge: 60 * 60 * 24 * 365,
+        };
+      },
+      onUploadCompleted: async () => {},
+    });
+    return NextResponse.json(result);
   } catch (err) {
-    console.error("[upload] failed", err);
-    return NextResponse.json({ error: "The photo could not be stored. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: err instanceof Error ? err.message : "The upload failed." }, { status: 400 });
   }
-  return NextResponse.json({ url });
 }
 
 // The photo library: every photo already uploaded, newest first.
@@ -61,9 +54,11 @@ export async function GET() {
     const photos: { url: string; uploadedAt: string }[] = [];
     let cursor: string | undefined;
     do {
-      const page = await list({ prefix: "products/", cursor, limit: 1000 });
+      const page = await list({ cursor, limit: 1000 });
       for (const b of page.blobs) {
-        if (b.pathname.endsWith(".jpg")) photos.push({ url: b.url, uploadedAt: new Date(b.uploadedAt).toISOString() });
+        const original = b.pathname.startsWith("originals/");
+        const oldUpload = b.pathname.startsWith("products/") && b.pathname.endsWith(".jpg");
+        if (original || oldUpload) photos.push({ url: b.url, uploadedAt: new Date(b.uploadedAt).toISOString() });
       }
       cursor = page.hasMore ? page.cursor : undefined;
     } while (cursor);

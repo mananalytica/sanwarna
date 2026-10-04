@@ -57,7 +57,7 @@ export default function ProductForm({ product, error }: { product?: Product; err
           <textarea name="story" rows={5} defaultValue={p?.story} className="input-field" />
         </Field>
 
-        <Field group label="Main image" hint="Main photo, ideally square.">
+        <Field group label="Main image" hint="Main photo, ideally square. Uploaded at full quality, exactly as your file is.">
           <ImageField name="image_link" required defaultValue={p?.images[0]} />
         </Field>
         <Field group label="Additional images" hint="More photos for the product page.">

@@ -272,8 +272,10 @@ since production may run without a database configured at all.
 
 ## Photo uploads
 
-- The admin product form uploads photos through `components/admin/ImageField.tsx`
-  (compresses in the browser: one 1600px JPG + 320/640/1280 WebP) to
-  `app/api/admin/upload` → Vercel Blob. `lib/imageLoader.js` maps a Blob
-  `.jpg` link to its WebP sizes. Widths must stay in sync across these
-  files and `scripts/optimize-images.mjs`.
+- The owner asked for NO compression on uploads. `components/admin/ImageField.tsx`
+  sends the original file straight from the browser to Vercel Blob
+  (`originals/…`) using `@vercel/blob/client`; `app/api/admin/upload` only
+  authorises it. These are served as-is at every screen size. Don't
+  reintroduce resizing or re-encoding of uploads without being asked.
+- Older uploads under `products/<id>.jpg` were compressed and have WebP
+  sizes beside them; `lib/imageLoader.js` still maps those.
