@@ -1,15 +1,16 @@
 import Link from "next/link";
 import ClearCartOnce from "@/components/ClearCartOnce";
+import OrderSummary from "@/components/OrderSummary";
 
 export const metadata = { title: "Your order" };
 
 const COPY = {
   cod: {
-    title: "Order placed",
+    title: "Thank you. Your order is placed.",
     body: "You pay in cash when your cufflinks arrive. Delivery is free.",
   },
   paid: {
-    title: "Payment received",
+    title: "Thank you. Your payment is received.",
     body: "JazzCash confirmed your payment. Delivery is free.",
   },
   failed: {
@@ -24,7 +25,7 @@ export default function ResultPage({ searchParams }: { searchParams: { status?: 
   const ref = (searchParams.ref ?? "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 24);
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center px-5 py-24 text-center">
+    <div className="mx-auto flex max-w-xl flex-col items-center px-5 py-16 text-center md:py-20">
       {ok && <ClearCartOnce />}
       <h1 className="font-display text-3xl text-graphite">{COPY[status].title}</h1>
       <p className="mt-3 max-w-md text-balance text-steel">{COPY[status].body}</p>
@@ -33,6 +34,7 @@ export default function ResultPage({ searchParams }: { searchParams: { status?: 
           Order reference <span className="font-semibold">{ref}</span>
         </p>
       )}
+      {ok && ref && <OrderSummary orderRef={ref} />}
       {ok && (
         <ol className="mt-10 w-full max-w-md space-y-4 text-left text-sm text-graphite/75">
           <li className="flex gap-3"><span className="font-medium text-graphite">1.</span>We call or WhatsApp you to confirm the order and give you the expected delivery date.</li>

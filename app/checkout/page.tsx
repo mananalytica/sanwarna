@@ -44,6 +44,14 @@ export default function CheckoutPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "The order could not be placed. Please try again.");
 
+      // Keep the server's version of the order in this browser tab, so the
+      // thank-you page can show exactly what was ordered.
+      try {
+        window.sessionStorage.setItem("sanwarna-last-order", JSON.stringify(data.order));
+      } catch {
+        /* private browsing: the thank-you page just shows the reference */
+      }
+
       if (payment === "cod") {
         router.push(`/checkout/result?status=cod&ref=${data.ref}`);
         return;
