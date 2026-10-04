@@ -8,7 +8,6 @@ import { useCart } from "@/context/CartContext";
 const NAV_LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/shop?category=cufflinks", label: "Cufflinks" },
-  { href: "/shop?category=tie-pens", label: "Tie Pens" },
 ];
 
 export default function Navbar() {

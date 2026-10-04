@@ -4,9 +4,9 @@ import { getAllProducts } from "@/lib/getProducts";
 import ShopClient from "@/components/ShopClient";
 
 export const metadata: Metadata = {
-  title: "Shop All Cufflinks & Tie Pens",
+  title: "Shop the Collection",
   description:
-    "Browse SANWARNA's full collection of hand-finished cufflinks, tie pens, tie clips, and gift sets.",
+    "Browse the SANWARNA collection. Crystal cufflinks in four colours, boxed and ready to gift. Free delivery across Pakistan, Cash on Delivery.",
 };
 
 export default async function ShopPage() {

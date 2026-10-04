@@ -45,7 +45,7 @@ export function WhatsAppLink({
 export default function WhatsAppFloat() {
   return (
     <a
-      href={whatsappLink("Assalam o Alaikum, I have a question about SANWARNA cufflinks.")}
+      href={whatsappLink("Assalam o Alaikum, I have a question about SANWARNA.")}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

@@ -52,7 +52,7 @@ export async function GET() {
   <channel>
     <title>${BRAND} — Product Feed</title>
     <link>${SITE_URL}</link>
-    <description>Luxury cufflinks and tie pens for men, delivered free across Pakistan.</description>
+    <description>Beauty in every detail. Statement jewellery and accessories, delivered free across Pakistan.</description>
 ${products.map(item).join("\n")}
   </channel>
 </rss>

@@ -25,7 +25,10 @@ export default function ShopFilters({
   sort,
   onSortChange,
   resultCount,
+  available,
 }: {
+  /** Categories that have at least one product; others are not offered. */
+  available: string[];
   category: string;
   onCategoryChange: (v: string) => void;
   search: string;
@@ -42,7 +45,7 @@ export default function ShopFilters({
             type="search"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search cufflinks, tie pens…"
+            placeholder="Search the collection…"
             aria-label="Search products"
             className="w-full rounded-xl border border-champagne/25 bg-cloud px-4 py-2.5 text-sm text-graphite placeholder:text-graphite/40 focus:border-champagne"
           />
@@ -68,7 +71,7 @@ export default function ShopFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {CATEGORIES.map((c) => (
+        {CATEGORIES.filter((c) => c.value === "all" || available.includes(c.value)).map((c) => (
           <button
             key={c.value}
             onClick={() => onCategoryChange(c.value)}

@@ -72,7 +72,7 @@ export default function HeroGallery({ products }: { products: Product[] }) {
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Our cufflinks"
+      aria-label="Our collection"
       className="relative bg-graphite"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -112,10 +112,15 @@ export default function HeroGallery({ products }: { products: Product[] }) {
           <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 pb-8 md:flex-row md:items-end md:justify-between md:px-8 md:pb-12">
             <div className="max-w-xl text-paper">
               <h1 className="font-display text-3xl leading-tight md:text-5xl">
-                Luxury cufflinks, delivered free across Pakistan.
+                Beauty in every detail.
               </h1>
-              <p key={product.id} className="mt-4 text-base text-paper/85 md:text-lg">
-                {product.name}, {formatPrice(product.price + (variant.priceModifier ?? 0))}
+              <p className="mt-3 text-sm text-paper/80 md:text-base">Free delivery across Pakistan. Pay on delivery.</p>
+              <p key={product.id} className="mt-4 flex flex-wrap items-baseline gap-x-3 text-base text-paper md:text-lg">
+                <span>{product.name}</span>
+                <span>{formatPrice(product.price + (variant.priceModifier ?? 0))}</span>
+                {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  <span className="text-sm text-paper/60 line-through">{formatPrice(product.compareAtPrice)}</span>
+                )}
               </p>
               <div className="pointer-events-auto mt-5 flex flex-wrap gap-3">
                 <button

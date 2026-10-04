@@ -28,23 +28,24 @@ const body = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SANWARNA — Luxury Cufflinks & Tie Pens for Men, Pakistan",
+    default: "SANWARNA | Beauty in Every Detail",
     template: "%s · SANWARNA",
   },
   description:
-    "SANWARNA makes luxury cufflinks and tie pens for the modern Pakistani gentleman. Prices in PKR, free delivery across Pakistan, Cash on Delivery.",
+    "SANWARNA: beauty in every detail. Statement jewellery and accessories, starting with crystal cufflinks for men. Free delivery across Pakistan, Cash on Delivery.",
   keywords: [
     "luxury cufflinks Pakistan",
-    "tie pens Pakistan",
+    "cufflinks Pakistan",
+    "cufflinks for men",
     "men's accessories Pakistan",
     "wedding cufflinks",
     "barat cufflinks",
     "SANWARNA",
   ],
   openGraph: {
-    title: "SANWARNA — Luxury Cufflinks & Tie Pens, Pakistan",
+    title: "SANWARNA | Beauty in Every Detail",
     description:
-      "Luxury cufflinks and tie pens for the modern Pakistani gentleman. Free delivery and Cash on Delivery.",
+      "Statement jewellery and accessories, starting with crystal cufflinks. Free delivery across Pakistan, Cash on Delivery.",
     siteName: "SANWARNA",
     type: "website",
   },

@@ -13,9 +13,8 @@ export default function Footer() {
               <Logo className="h-14" />
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-graphite/60">
-              Sanwarna — to make yourself beautiful. Cufflinks and tie pens for
-              the modern Pakistani gentleman, delivered nationwide with Cash
-              on Delivery.
+              Sanwarna means to adorn. Beauty in every detail, delivered free
+              across Pakistan with Cash on Delivery.
             </p>
           </div>
 
@@ -23,8 +22,6 @@ export default function Footer() {
             <p className="text-xs uppercase tracking-wider2 text-champagne/80">Shop</p>
             <ul className="mt-4 space-y-2.5 text-sm text-graphite/70">
               <li><Link href="/shop?category=cufflinks" className="hover:text-champagne">Cufflinks</Link></li>
-              <li><Link href="/shop?category=tie-pens" className="hover:text-champagne">Tie Pens</Link></li>
-              <li><Link href="/shop?category=sets" className="hover:text-champagne">Gift Sets</Link></li>
               <li><Link href="/shop" className="hover:text-champagne">All Products</Link></li>
             </ul>
           </div>
@@ -33,7 +30,7 @@ export default function Footer() {
             <p className="text-xs uppercase tracking-wider2 text-champagne/80">Help</p>
             <ul className="mt-4 space-y-2.5 text-sm text-graphite/70">
               <li>
-                <a href={whatsappLink("Assalam o Alaikum, I have a question about SANWARNA cufflinks.")} target="_blank" rel="noopener noreferrer" className="hover:text-champagne">
+                <a href={whatsappLink("Assalam o Alaikum, I have a question about SANWARNA.")} target="_blank" rel="noopener noreferrer" className="hover:text-champagne">
                   WhatsApp {WHATSAPP_DISPLAY}
                 </a>
               </li>

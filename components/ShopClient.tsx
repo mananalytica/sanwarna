@@ -60,6 +60,7 @@ export default function ShopClient({ products }: { products: Product[] }) {
   return (
     <div>
       <ShopFilters
+        available={Array.from(new Set(products.map((p) => p.category)))}
         category={category}
         onCategoryChange={updateCategory}
         search={search}
