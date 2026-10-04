@@ -287,3 +287,16 @@ since production may run without a database configured at all.
   name as styled text. Icon/preview files: `app/icon.svg`,
   `app/apple-icon.png`, `app/opengraph-image.png`. Vector masters for
   print/social are in `public/brand/`.
+
+## Content pages, journal, pairing guide
+
+- Information pages (about, delivery, returns, care, faq, contact,
+  privacy, terms) are text in `lib/pages.ts`, rendered by
+  `app/[page]/page.tsx`. Every statement there is a promise to customers:
+  don't add delivery times, exchange windows, materials or engraving
+  claims the owner hasn't confirmed. Engraving and "7-day exchange" were
+  removed on the owner's instruction.
+- Journal articles are in `lib/journal.ts` (`/journal`, `/journal/[slug]`).
+- Colour matching advice (shirts / shalwar kameez) is in `lib/pairing.ts`,
+  shown on product pages, the homepage "Wear it for" tiles, and the
+  journal matching guide via `components/PairingTable.tsx`.

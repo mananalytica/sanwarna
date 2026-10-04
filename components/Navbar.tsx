@@ -7,7 +7,9 @@ import { useCart } from "@/context/CartContext";
 
 const NAV_LINKS = [
   { href: "/shop", label: "Shop" },
-  { href: "/shop?category=cufflinks", label: "Cufflinks" },
+  { href: "/journal", label: "Journal" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function Navbar() {

@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import { getAllProducts, getProductBySlug, getRelatedProducts } from "@/lib/getProducts";
 import ProductPurchasePanel from "@/components/ProductPurchasePanel";
 import ProductSection from "@/components/ProductSection";
+import Link from "next/link";
+import { formatPrice } from "@/lib/currency";
+import { pairingFor } from "@/lib/pairing";
 
 export async function generateStaticParams() {
   const products = await getAllProducts();
@@ -17,11 +20,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const product = await getProductBySlug(params.slug);
   if (!product) return {};
-  return {
-    title: product.name,
-    description: product.description,
-    openGraph: { title: product.name, description: product.description },
-  };
+  const title = `${product.name} | ${formatPrice(product.price)}`;
+  const description = `${product.description} Free delivery across Pakistan. Cash on Delivery.`;
+  return { title, description, openGraph: { title, description } };
 }
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
@@ -29,6 +30,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
   if (!product) notFound();
 
   const related = await getRelatedProducts(product);
+  const pairing = pairingFor(product);
 
   return (
     <div>
@@ -60,9 +62,39 @@ export default async function ProductPage({ params }: { params: { slug: string }
         </div>
       </div>
 
+      {pairing && (
+        <div className="mx-auto max-w-7xl px-5 pb-16 md:px-8">
+          <div className="hairline-solid mb-10" />
+          <h2 className="font-display text-2xl text-graphite">Wear it with</h2>
+          <dl className="mt-6 grid gap-8 text-graphite/70 md:grid-cols-4">
+            <div>
+              <dt className="text-sm font-medium text-graphite">Shirts</dt>
+              <dd className="mt-2 leading-relaxed">{pairing.shirts}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-graphite">Shalwar kameez</dt>
+              <dd className="mt-2 leading-relaxed">{pairing.kameez}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-graphite">Avoid</dt>
+              <dd className="mt-2 leading-relaxed">{pairing.avoid}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-graphite">Best for</dt>
+              <dd className="mt-2 leading-relaxed">{pairing.bestFor}</dd>
+            </div>
+          </dl>
+          <p className="mt-6 text-sm">
+            <Link href="/journal/matching-cufflinks-to-shirts-and-shalwar-kameez" className="text-champagne underline-offset-4 hover:underline">
+              Read the full matching guide
+            </Link>
+          </p>
+        </div>
+      )}
+
       {related.length > 0 && (
         <ProductSection
-          title="Pairs Well With"
+          title="More from the collection"
           products={related}
           viewAllHref={`/shop?category=${product.category}`}
         />

@@ -108,10 +108,14 @@ export default function ProductPurchasePanel({ product }: { product: Product }) 
       </div>
 
       <div className="mt-10 space-y-3 text-sm text-graphite/55">
-        <p>Free engraving on all cufflinks</p>
         <p>Free delivery on every order, anywhere in Pakistan</p>
         <p>Cash on Delivery available across Pakistan</p>
-        <p>7-day exchange, no questions asked</p>
+        <p>Arrives in a black velvet presentation box</p>
+        <p>
+          <Link href="/delivery" className="underline underline-offset-4 hover:text-champagne">Delivery and payment</Link>
+          <span aria-hidden className="mx-2">|</span>
+          <Link href="/returns" className="underline underline-offset-4 hover:text-champagne">Returns</Link>
+        </p>
       </div>
     </div>
   );

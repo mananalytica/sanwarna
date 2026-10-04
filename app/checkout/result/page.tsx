@@ -33,6 +33,13 @@ export default function ResultPage({ searchParams }: { searchParams: { status?: 
           Order reference <span className="font-semibold">{ref}</span>
         </p>
       )}
+      {ok && (
+        <ol className="mt-10 w-full max-w-md space-y-4 text-left text-sm text-graphite/75">
+          <li className="flex gap-3"><span className="font-medium text-graphite">1.</span>We call or WhatsApp you to confirm the order and give you the expected delivery date.</li>
+          <li className="flex gap-3"><span className="font-medium text-graphite">2.</span>We pack your pair in its velvet box and hand it to the courier.</li>
+          <li className="flex gap-3"><span className="font-medium text-graphite">3.</span>It arrives at your door. Delivery is free.</li>
+        </ol>
+      )}
       <Link
         href={ok ? "/shop" : "/checkout"}
         className="mt-8 rounded-full bg-graphite px-7 py-3 text-sm font-medium text-paper hover:bg-champagne"

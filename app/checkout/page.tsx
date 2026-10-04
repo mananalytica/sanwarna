@@ -123,6 +123,9 @@ export default function CheckoutPage() {
                 </span>
               </label>
             </div>
+            <p className="mt-4 text-sm text-steel">
+              We confirm every order by call or WhatsApp before it ships, and tell you the expected delivery date.
+            </p>
           </fieldset>
         </div>
 

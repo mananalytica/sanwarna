@@ -21,8 +21,9 @@ export default function Footer() {
           <div>
             <p className="text-xs uppercase tracking-wider2 text-champagne/80">Shop</p>
             <ul className="mt-4 space-y-2.5 text-sm text-graphite/70">
-              <li><Link href="/shop?category=cufflinks" className="hover:text-champagne">Cufflinks</Link></li>
-              <li><Link href="/shop" className="hover:text-champagne">All Products</Link></li>
+              <li><Link href="/shop" className="hover:text-champagne">The Crystal Collection</Link></li>
+              <li><Link href="/journal" className="hover:text-champagne">Journal</Link></li>
+              <li><Link href="/about" className="hover:text-champagne">About</Link></li>
             </ul>
           </div>
 
@@ -34,7 +35,11 @@ export default function Footer() {
                   WhatsApp {WHATSAPP_DISPLAY}
                 </a>
               </li>
-              <li><Link href="/cart" className="hover:text-champagne">Your Bag</Link></li>
+              <li><Link href="/delivery" className="hover:text-champagne">Delivery and payment</Link></li>
+              <li><Link href="/returns" className="hover:text-champagne">Returns</Link></li>
+              <li><Link href="/care" className="hover:text-champagne">Care guide</Link></li>
+              <li><Link href="/faq" className="hover:text-champagne">Questions</Link></li>
+              <li><Link href="/contact" className="hover:text-champagne">Contact</Link></li>
             </ul>
           </div>
 
@@ -53,6 +58,8 @@ export default function Footer() {
           <p>© {new Date().getFullYear()} SANWARNA · Pakistan. All rights reserved. Prices in PKR.</p>
           <p className="flex items-center gap-4">
             <span>Free delivery across Pakistan. Cash on Delivery available.</span>
+            <Link href="/privacy" className="hover:text-champagne">Privacy</Link>
+            <Link href="/terms" className="hover:text-champagne">Terms</Link>
             <Link href="/admin/login" className="text-graphite/30 hover:text-champagne">
               Admin
             </Link>
