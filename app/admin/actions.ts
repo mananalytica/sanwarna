@@ -43,10 +43,10 @@ export async function saveProductAction(form: FormData) {
 
   const inStock = text(form, "availability") !== "out of stock";
   const color = text(form, "color") || "Standard";
-  // The form edits one colour. Other colours a product already has are kept.
-  const variants = existing?.variants.length
-    ? existing.variants.map((v, i) => ({ ...v, label: i === 0 ? color : v.label, inStock }))
-    : [{ id: "v1", label: color, swatch: "#D9D9D9", inStock }];
+  // Each product is one colour: one finish, with the circle colour chosen in the form.
+  const swatchRaw = text(form, "swatch");
+  const swatch = /^#[0-9a-fA-F]{6}$/.test(swatchRaw) ? swatchRaw : "#D9D9D9";
+  const variants = [{ id: existing?.variants[0]?.id ?? "v1", label: color, swatch, inStock }];
 
   const gender = text(form, "gender");
   const ageGroup = text(form, "age_group");
@@ -71,6 +71,7 @@ export async function saveProductAction(form: FormData) {
     bestSeller: form.get("bestSeller") === "on",
     newArrival: form.get("newArrival") === "on",
     tryOnAnchor: existing?.tryOnAnchor ?? "wrist",
+    swatch,
     sku: text(form, "sku") || undefined,
     googleCategory: text(form, "google_product_category") || undefined,
     productType: text(form, "product_type") || undefined,

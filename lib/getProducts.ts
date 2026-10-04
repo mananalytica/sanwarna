@@ -2,6 +2,7 @@ import { cache } from "react";
 import { Product } from "@/types";
 import { PRODUCTS as STATIC_PRODUCTS } from "@/data/products";
 import { imageUrl } from "./cloudinary";
+import { pairingFor } from "./pairing";
 import { DB_SCHEMA, getMotherDuckPool, isMotherDuckConfigured } from "./motherduck";
 
 // This is the ONE place the app should fetch product data from. Server
@@ -16,6 +17,24 @@ import { DB_SCHEMA, getMotherDuckPool, isMotherDuckConfigured } from "./motherdu
 // This means the app always works, even with zero configuration, and a
 // misconfigured or unreachable database degrades gracefully instead of
 // taking the site down.
+
+/**
+ * Each product is sold in one colour, so it shows one finish circle. Older
+ * saved products can carry leftover extra finishes and circle colours from
+ * the placeholder catalogue; this tidies them when read: keep the first
+ * finish, and colour its circle with, in order, the colour picked in the
+ * admin (product.swatch), the stone's colour (lib/pairing.ts), or
+ * whatever was stored.
+ */
+export function singleFinish(p: Product): Product {
+  const first = p.variants[0];
+  if (!first) return p;
+  const swatch = p.swatch ?? pairingFor({ ...p, variants: [first] })?.swatch ?? first.swatch;
+  return {
+    ...p,
+    variants: [{ ...first, swatch, inStock: p.variants.some((v) => v.inStock), priceModifier: 0 }],
+  };
+}
 
 async function queryProductsFromMotherDuck(): Promise<Product[] | null> {
   if (!isMotherDuckConfigured()) return null;
@@ -44,7 +63,7 @@ export const getAllProducts = cache(async (): Promise<Product[]> => {
   const dbProducts = await queryProductsFromMotherDuck();
   const products = dbProducts ?? STATIC_PRODUCTS;
   // Point product photos at Cloudinary when it's configured (lib/cloudinary.ts).
-  return products.map((p) => ({
+  return products.map(singleFinish).map((p) => ({
     ...p,
     images: p.images.map(imageUrl),
     heroImages: p.heroImages?.map(imageUrl),

@@ -37,6 +37,8 @@ export type Product = {
   heroImages?: string[];
   // Product-feed fields (see app/api/products/feed.xml). All optional —
   // sensible values are derived from the category when they are blank.
+  // Colour of the finish circle on the product page, picked in the admin.
+  swatch?: string;
   sku?: string; // g:id
   googleCategory?: string; // g:google_product_category
   productType?: string; // g:product_type

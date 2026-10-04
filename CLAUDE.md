@@ -300,3 +300,11 @@ since production may run without a database configured at all.
 - Colour matching advice (shirts / shalwar kameez) is in `lib/pairing.ts`,
   shown on product pages, the homepage "Wear it for" tiles, and the
   journal matching guide via `components/PairingTable.tsx`.
+
+## One finish per product
+
+- Products are single-colour. `singleFinish()` in `lib/getProducts.ts`
+  reduces every product to one variant when read, and colours its swatch
+  from the stone (`lib/pairing.ts`) unless a colour was picked in the
+  admin form ("Colour circle"). Don't reintroduce multi-variant UI
+  without being asked.

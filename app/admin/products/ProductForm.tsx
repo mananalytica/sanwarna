@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Product } from "@/types";
+import { singleFinish } from "@/lib/getProducts";
 import { GOOGLE_CATEGORY, PRODUCT_TYPE } from "@/lib/feed";
 import ImageField from "@/components/admin/ImageField";
 import { deleteProductAction, saveProductAction } from "../actions";
@@ -28,6 +29,8 @@ function Field({ label, hint, group, children }: { label: string; hint?: string;
 
 export default function ProductForm({ product, error }: { product?: Product; error?: string }) {
   const p = product;
+  // what the shop currently shows for this product (one finish, stone-coloured circle)
+  const shown = product ? singleFinish(product) : undefined;
   const regular = p ? p.compareAtPrice ?? p.price : "";
   const sale = p?.compareAtPrice ? p.price : "";
   const category = p?.category ?? "cufflinks";
@@ -82,7 +85,7 @@ export default function ProductForm({ product, error }: { product?: Product; err
           </Field>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <Field label="Category">
             <select name="category" defaultValue={category} className="input-field">
               <option value="cufflinks">Cufflinks</option>
@@ -91,8 +94,11 @@ export default function ProductForm({ product, error }: { product?: Product; err
               <option value="sets">Gift sets</option>
             </select>
           </Field>
-          <Field label="Color">
+          <Field label="Color" hint="The name shown beside the colour circle.">
             <input name="color" defaultValue={p?.variants[0]?.label} placeholder="Silver / Clear Crystal" className="input-field" />
+          </Field>
+          <Field label="Colour circle" hint="Pick the stone's colour. Shown as the circle on the product page.">
+            <input name="swatch" type="color" defaultValue={shown?.variants[0]?.swatch ?? "#E9EEF4"} className="h-11 w-20 cursor-pointer rounded-lg border border-hairline bg-cloud p-1" />
           </Field>
           <Field label="Tags" hint="Separated by commas.">
             <input name="tags" defaultValue={p?.tags.join(", ")} className="input-field" />
