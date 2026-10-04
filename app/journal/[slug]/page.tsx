@@ -1,27 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ARTICLES, getArticle } from "@/lib/journal";
+import Image from "next/image";
+import { getArticles, getArticleBySlug } from "@/lib/journalStore";
 import PairingTable from "@/components/PairingTable";
 
-export const dynamicParams = false;
-export function generateStaticParams() {
-  return ARTICLES.map((a) => ({ slug: a.slug }));
+// Articles added later in the admin are built the first time they are opened.
+export async function generateStaticParams() {
+  return (await getArticles()).map((a) => ({ slug: a.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const a = getArticle(params.slug);
-  return a ? { title: a.title, description: a.summary } : {};
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const a = await getArticleBySlug(params.slug);
+  if (!a) return {};
+  return { title: a.title, description: a.summary, openGraph: { title: a.title, description: a.summary, ...(a.image ? { images: [a.image] } : {}) } };
 }
 
-export default function ArticlePage({ params }: { params: { slug: string } }) {
-  const a = getArticle(params.slug);
+export default async function ArticlePage({ params }: { params: { slug: string } }) {
+  const a = await getArticleBySlug(params.slug);
   if (!a) notFound();
 
   return (
     <article className="mx-auto max-w-2xl px-5 py-14 md:py-20">
       <Link href="/journal" className="text-sm text-steel hover:text-graphite">Journal</Link>
       <h1 className="mt-3 text-balance font-display text-4xl leading-tight text-graphite">{a.title}</h1>
+
+      {a.image && (
+        <div className="relative mt-8 aspect-[16/9] overflow-hidden rounded-2xl border border-hairline bg-cloud">
+          <Image src={a.image} alt="" fill priority sizes="(max-width: 768px) 100vw, 672px" className="object-cover" />
+        </div>
+      )}
 
       {a.sections.map((s, i) => (
         <section key={i} className={i === 0 ? "mt-6" : "mt-10"}>

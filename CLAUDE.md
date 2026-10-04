@@ -308,3 +308,14 @@ since production may run without a database configured at all.
   from the stone (`lib/pairing.ts`) unless a colour was picked in the
   admin form ("Colour circle"). Don't reintroduce multi-variant UI
   without being asked.
+
+## Journal in the admin; announcement bar
+
+- Journal articles are editable at `/admin/journal` and stored in
+  MotherDuck (`lib/journalStore.ts`, table created automatically). The
+  built-in `ARTICLES` in `lib/journal.ts` are the fallback and the seed
+  for the first save. The public pages read through `getArticles()`.
+  Article bodies are edited as plain text ("## " heading, "- " bullet);
+  `bodyToText` / `textToBody` convert.
+- `components/AnnouncementBar.tsx` is the scrolling headline above the
+  header (messages in its `MESSAGES` list).

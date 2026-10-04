@@ -7,6 +7,8 @@ import { ADMIN_COOKIE_NAME, verifyAdminSessionToken } from "@/lib/adminAuth";
 import { deleteProduct, listProductsForAdmin, saveProduct } from "@/lib/productStore";
 import { FULFILMENT, Fulfilment, setFulfilment, setPaymentStatus } from "@/lib/orders";
 import { Product, ProductCategory } from "@/types";
+import { deleteArticle, listArticlesForAdmin, saveArticle } from "@/lib/journalStore";
+import { Article, textToBody } from "@/lib/journal";
 
 // Every action re-checks the admin session itself; never rely only on
 // the middleware for anything that changes data.
@@ -107,6 +109,45 @@ export async function updateOrderAction(form: FormData) {
     await setPaymentStatus(ref, text(form, "paid") === "yes" ? "paid" : "cod-pending");
   }
   revalidatePath("/admin/orders");
+}
+
+export async function saveArticleAction(form: FormData) {
+  await requireAdmin();
+  const previous = text(form, "previous_slug");
+  const back = (msg: string): never => redirect(`/admin/journal/${previous || "new"}?error=${encodeURIComponent(msg)}`);
+  const existing = previous ? (await listArticlesForAdmin()).find((a) => a.slug === previous) : undefined;
+
+  const title = text(form, "title");
+  const sections = textToBody(text(form, "body"));
+  if (!title) back("Title is required.");
+  if (sections.length === 0) back("The article needs some text.");
+  const slug = existing?.slug ?? slugify(title);
+  if (!slug) back("The title needs at least one letter or number.");
+
+  const article: Article = {
+    slug,
+    title,
+    summary: text(form, "summary"),
+    date: existing?.date ?? new Date().toISOString().slice(0, 10),
+    image: text(form, "image") || undefined,
+    showPairingTable: form.get("showPairingTable") === "on" || undefined,
+    sections,
+  };
+  try {
+    await saveArticle(article, previous || undefined);
+  } catch (err) {
+    console.error("[admin] save article failed", err);
+    back(err instanceof Error ? err.message : "The article could not be saved.");
+  }
+  revalidatePath("/", "layout");
+  redirect("/admin/journal?saved=1");
+}
+
+export async function deleteArticleAction(form: FormData) {
+  await requireAdmin();
+  await deleteArticle(text(form, "slug"));
+  revalidatePath("/", "layout");
+  redirect("/admin/journal?deleted=1");
 }
 
 export async function logoutAction() {

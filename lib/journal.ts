@@ -8,6 +8,8 @@ export type Article = {
   title: string;
   summary: string;
   date: string; // YYYY-MM-DD
+  /** Photo shown on the journal list and at the top of the article. */
+  image?: string;
   /** Shows the colour-by-colour matching table from lib/pairing.ts under the text. */
   showPairingTable?: boolean;
   sections: ArticleSection[];
@@ -16,6 +18,7 @@ export type Article = {
 export const ARTICLES: Article[] = [
   {
     slug: "matching-cufflinks-to-shirts-and-shalwar-kameez",
+    image: "/images/products/rouge-wide-1.jpg",
     title: "Which colour with which outfit: shirts and shalwar kameez",
     summary: "A colour-by-colour guide to pairing crystal cufflinks with shirts, suits and shalwar kameez.",
     date: "2026-10-04",
@@ -43,6 +46,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "how-to-wear-cufflinks",
+    image: "/images/products/aurora-wide-1.jpg",
     title: "How to wear cufflinks: a simple guide for first-timers",
     summary: "Putting on a cufflink takes ten seconds once you know the order.",
     date: "2026-10-04",
@@ -72,6 +76,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "which-shirts-work-with-cufflinks",
+    image: "/images/products/aurora-1.jpg",
     title: "Which shirts work with cufflinks? Double cuffs explained",
     summary: "Cufflinks need a cuff with holes on both sides. Here is how to tell what you have.",
     date: "2026-10-04",
@@ -99,6 +104,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "cufflinks-for-the-groom",
+    image: "/images/products/rouge-wide-3.jpg",
     title: "Cufflinks for the groom: barat and walima",
     summary: "What to wear on each day, and how to match the groomsmen.",
     date: "2026-10-04",
@@ -126,6 +132,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "cufflinks-with-sherwani-or-kurta",
+    image: "/images/products/rouge-1.jpg",
     title: "Can you wear cufflinks with a sherwani or kurta?",
     summary: "Yes. Here is what to ask your tailor for.",
     date: "2026-10-04",
@@ -149,6 +156,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "gift-ideas-for-him",
+    image: "/images/products/aurora-wide-4.jpg",
     title: "Gift ideas for him: Eid, anniversaries and weddings",
     summary: "Why cufflinks make an easy, lasting gift, and how to choose a colour for someone else.",
     date: "2026-10-04",
@@ -177,6 +185,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "how-to-care-for-cufflinks",
+    image: "/images/products/aurora-wide-2.jpg",
     title: "How to care for cufflinks so they stay bright",
     summary: "Five habits that keep the stones clear and the metal polished.",
     date: "2026-10-04",
@@ -202,6 +211,7 @@ export const ARTICLES: Article[] = [
   },
   {
     slug: "cufflinks-tie-pins-and-tie-bars",
+    image: "/images/products/rouge-wide-2.jpg",
     title: "Cufflinks, tie pins and tie bars: what each one is for",
     summary: "Three small accessories that are often confused.",
     date: "2026-10-04",
@@ -228,4 +238,32 @@ export const ARTICLES: Article[] = [
   },
 ];
 
-export const getArticle = (slug: string) => ARTICLES.find((a) => a.slug === slug);
+// ── Plain-text form of an article body, used by the admin editor ─────────
+// A line starting "## " is a heading, lines starting "- " are bullet
+// points, and anything else is a paragraph (blank line between paragraphs).
+
+export function bodyToText(sections: ArticleSection[]): string {
+  return sections
+    .map((s) => [s.heading ? `## ${s.heading}` : "", ...(s.body ?? []), (s.list ?? []).map((i) => `- ${i}`).join("\n")].filter(Boolean).join("\n\n"))
+    .join("\n\n");
+}
+
+export function textToBody(text: string): ArticleSection[] {
+  const sections: ArticleSection[] = [{}];
+  for (const block of text.replace(/\r/g, "").split(/\n\s*\n/)) {
+    for (const chunk of block.split(/\n(?=## )/)) {
+      const lines = chunk.split("\n").map((l) => l.trim()).filter(Boolean);
+      if (lines.length === 0) continue;
+      if (lines[0].startsWith("## ")) {
+        sections.push({ heading: lines.shift()!.slice(3).trim() });
+        if (lines.length === 0) continue;
+      }
+      const cur = sections[sections.length - 1];
+      const bullets = lines.filter((l) => /^[-•*] /.test(l)).map((l) => l.slice(2).trim());
+      const prose = lines.filter((l) => !/^[-•*] /.test(l)).join(" ");
+      if (prose) (cur.body ??= []).push(prose);
+      if (bullets.length) (cur.list ??= []).push(...bullets);
+    }
+  }
+  return sections.filter((s) => s.heading || s.body?.length || s.list?.length);
+}

@@ -113,3 +113,12 @@ body {
   .hero-slide { transition: none; }
   .hero-slide[data-active="true"] img { animation: none; }
 }
+
+/* ───────── Running headline (components/AnnouncementBar.tsx) ───────── */
+.ticker-track { animation: ticker 38s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; margin: 0 auto; }
+  .ticker-track .ticker-run + .ticker-run { display: none; }
+}

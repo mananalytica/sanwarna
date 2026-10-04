@@ -6,6 +6,7 @@ import { CartProvider } from "@/context/CartContext";
 import { ProductsProvider } from "@/context/ProductsContext";
 import { getAllProducts } from "@/lib/getProducts";
 import Navbar from "@/components/Navbar";
+import AnnouncementBar from "@/components/AnnouncementBar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import WhatsAppFloat from "@/components/WhatsApp";
@@ -75,6 +76,7 @@ export default async function RootLayout({
             >
               Skip to content
             </a>
+            <AnnouncementBar />
             <Navbar />
             <main id="main">{children}</main>
             <Footer />

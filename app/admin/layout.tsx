@@ -15,6 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <span className="font-medium text-graphite">Admin</span>
             <Link href="/admin/products" className="text-steel hover:text-graphite">Products</Link>
             <Link href="/admin/orders" className="text-steel hover:text-graphite">Orders</Link>
+            <Link href="/admin/journal" className="text-steel hover:text-graphite">Journal</Link>
             <Link href="/video-studio" className="text-steel hover:text-graphite">Video Studio</Link>
             <Link href="/api/products/feed.xml" className="text-steel hover:text-graphite">Product feed</Link>
             <form action={logoutAction} className="ml-auto">
