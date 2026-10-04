@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Logo from "./Logo";
 import { useCart } from "@/context/CartContext";
 
 const NAV_LINKS = [
@@ -31,10 +32,10 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
         <Link
           href="/"
-          className="font-display text-xl tracking-[0.12em] text-graphite"
+          className="text-graphite"
           onClick={() => setMobileOpen(false)}
         >
-          SANWARNA
+          <Logo className="h-10 md:h-12" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

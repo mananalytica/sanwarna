@@ -279,3 +279,11 @@ since production may run without a database configured at all.
   reintroduce resizing or re-encoding of uploads without being asked.
 - Older uploads under `products/<id>.jpg` were compressed and have WebP
   sizes beside them; `lib/imageLoader.js` still maps those.
+
+## Logo
+
+- The logo is `components/Logo.tsx` (inline SVG: crescent S mark + outlined
+  SANWARNA lettering). Use `<Logo />` or `<LogoMark />`; don't retype the
+  name as styled text. Icon/preview files: `app/icon.svg`,
+  `app/apple-icon.png`, `app/opengraph-image.png`. Vector masters for
+  print/social are in `public/brand/`.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "./Logo";
 import { whatsappLink, WHATSAPP_DISPLAY } from "@/lib/whatsapp";
 import NewsletterForm from "./NewsletterForm";
 
@@ -8,7 +9,9 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-5 py-14 md:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>
-            <p className="font-display text-2xl tracking-[0.1em] text-graphite">SANWARNA</p>
+            <div className="text-graphite">
+              <Logo className="h-14" />
+            </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-graphite/60">
               Sanwarna — to make yourself beautiful. Cufflinks and tie pens for
               the modern Pakistani gentleman, delivered nationwide with Cash
